@@ -5,7 +5,8 @@ contract CampusCoin {
     string public constant name = "CampusCoin";
     string public constant symbol = "CAMP";
     uint8 public constant decimals = 18;
-    uint256 public constant totalSupply = 1_000_000 * 10 ** uint256(decimals);
+    uint256 public totalSupply;
+    address public immutable owner;
 
     mapping(address => uint256) private balances;
     mapping(address => mapping(address => uint256)) private allowances;
@@ -17,8 +18,13 @@ contract CampusCoin {
     event Tested(address indexed by, string message);
 
     constructor() {
-        balances[msg.sender] = totalSupply;
-        emit Transfer(address(0), msg.sender, totalSupply);
+        owner = msg.sender;
+        _mint(msg.sender, 1_000_000 * 10 ** uint256(decimals));
+    }
+
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Only owner");
+        _;
     }
 
     function balanceOf(address account) external view returns (uint256) {
@@ -53,6 +59,28 @@ contract CampusCoin {
 
         _transfer(from, to, amount);
         return true;
+    }
+
+    function mint(address to, uint256 amount) external onlyOwner returns (bool) {
+        _mint(to, amount);
+        return true;
+    }
+
+    function burn(uint256 amount) external returns (bool) {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+
+        balances[msg.sender] -= amount;
+        totalSupply -= amount;
+        emit Transfer(msg.sender, address(0), amount);
+        return true;
+    }
+
+    function _mint(address to, uint256 amount) private {
+        require(to != address(0), "Invalid recipient");
+
+        totalSupply += amount;
+        balances[to] += amount;
+        emit Transfer(address(0), to, amount);
     }
 
     function _transfer(address from, address to, uint256 amount) private {
