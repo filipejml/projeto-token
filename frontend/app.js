@@ -1,6 +1,7 @@
 const CONTRACT_ABI = [
-  "function ping() external returns (string memory)",
-  "function getMessage() external view returns (string memory)"
+  "function balanceOf(address account) external view returns (uint256)",
+  "function transfer(address to, uint256 amount) external returns (bool)",
+  "function decimals() external view returns (uint8)"
 ];
 
 let provider = null;
@@ -8,9 +9,12 @@ let signer = null;
 let currentAccount = null;
 
 const connectBtn = document.getElementById('connectBtn');
-const testBtn = document.getElementById('testBtn');
-const contractBtn = document.getElementById('contractBtn');
+const balanceBtn = document.getElementById('balanceBtn');
+const transferBtn = document.getElementById('transferBtn');
 const contractAddressInput = document.getElementById('contractAddress');
+const recipientInput = document.getElementById('recipient');
+const amountInput = document.getElementById('amount');
+const balanceEl = document.getElementById('balance');
 const statusEl = document.getElementById('status');
 
 function setStatus(message, isError = false) {
@@ -19,14 +23,13 @@ function setStatus(message, isError = false) {
 }
 
 function enableButtons(enabled) {
-  testBtn.disabled = !enabled;
-  contractBtn.disabled = !enabled;
+  balanceBtn.disabled = !enabled;
+  transferBtn.disabled = !enabled;
 }
 
 async function ensureWallet() {
   if (!window.ethereum) {
-    setStatus('MetaMask não encontrado. Instale a extensão.', true);
-    throw new Error('MetaMask not found');
+    throw new Error('MetaMask não encontrado. Instale a extensão.');
   }
 
   if (!provider) {
@@ -39,65 +42,85 @@ async function ensureWallet() {
     signer = await provider.getSigner();
   }
 
-  return { provider, signer, currentAccount };
+  return { signer, currentAccount };
+}
+
+function getContract() {
+  const address = contractAddressInput.value.trim();
+
+  if (!ethers.isAddress(address)) {
+    throw new Error('Informe um endereço de contrato válido.');
+  }
+
+  return new ethers.Contract(address, CONTRACT_ABI, signer);
 }
 
 async function connectWallet() {
   try {
-    const { currentAccount } = await ensureWallet();
-    setStatus(`Conectado: ${currentAccount.slice(0, 8)}...`);
+    await ensureWallet();
     enableButtons(true);
+    setStatus(`Conectado: ${currentAccount.slice(0, 8)}...`);
+
+    if (ethers.isAddress(contractAddressInput.value.trim())) {
+      await loadBalance();
+    }
   } catch (error) {
     console.error(error);
-    setStatus('Não foi possível conectar ao MetaMask.', true);
+    setStatus(error.message || 'Não foi possível conectar ao MetaMask.', true);
   }
 }
 
-async function runWalletTest() {
+async function loadBalance() {
   try {
-    const { signer, currentAccount } = await ensureWallet();
-    setStatus('Aguardando confirmação no MetaMask...');
+    await ensureWallet();
+    const contract = getContract();
+    const [rawBalance, decimals] = await Promise.all([
+      contract.balanceOf(currentAccount),
+      contract.decimals()
+    ]);
 
-    const tx = await signer.sendTransaction({
-      to: currentAccount,
-      value: 0n
-    });
-
-    setStatus('Transação enviada. Aguardando confirmação...');
-    const receipt = await tx.wait();
-    setStatus(`Teste concluído. Hash: ${receipt.hash}`);
+    balanceEl.textContent = ethers.formatUnits(rawBalance, decimals);
+    setStatus('Saldo atualizado com sucesso.');
   } catch (error) {
     console.error(error);
-    setStatus('O teste de transação foi cancelado ou falhou.', true);
+    setStatus(error.shortMessage || error.message || 'Falha ao consultar o saldo.', true);
   }
 }
 
-async function runContractTest() {
+async function transferTokens() {
   try {
-    const { signer } = await ensureWallet();
-    const contractAddress = contractAddressInput.value.trim();
+    await ensureWallet();
+    const recipient = recipientInput.value.trim();
+    const amount = amountInput.value.trim();
 
-    if (!contractAddress) {
-      setStatus('Informe o endereço do contrato antes de chamar a função.', true);
-      return;
+    if (!ethers.isAddress(recipient)) {
+      throw new Error('Informe uma carteira de destino válida.');
+    }
+    if (!amount || Number(amount) <= 0) {
+      throw new Error('Informe uma quantidade maior que zero.');
     }
 
-    const contract = new ethers.Contract(contractAddress, CONTRACT_ABI, signer);
-    setStatus('Enviando chamada ao contrato...');
+    const contract = getContract();
+    const decimals = await contract.decimals();
+    const value = ethers.parseUnits(amount, decimals);
 
-    const tx = await contract.ping();
-    setStatus(`Chamada enviada. Hash: ${tx.hash}`);
+    setStatus('Confirme a transferência no MetaMask...');
+    const tx = await contract.transfer(recipient, value);
+    setStatus(`Transferência enviada: ${tx.hash}`);
     await tx.wait();
-    setStatus('Contrato chamado com sucesso.');
+
+    amountInput.value = '';
+    await loadBalance();
+    setStatus(`Transferência confirmada: ${tx.hash}`);
   } catch (error) {
     console.error(error);
-    setStatus('Falha ao chamar o contrato.', true);
+    setStatus(error.shortMessage || error.message || 'Falha na transferência.', true);
   }
 }
 
 connectBtn.addEventListener('click', connectWallet);
-testBtn.addEventListener('click', runWalletTest);
-contractBtn.addEventListener('click', runContractTest);
+balanceBtn.addEventListener('click', loadBalance);
+transferBtn.addEventListener('click', transferTokens);
 
 window.addEventListener('load', () => {
   enableButtons(false);
@@ -105,3 +128,13 @@ window.addEventListener('load', () => {
     setStatus('MetaMask detectado. Clique em conectar para começar.');
   }
 });
+
+if (window.ethereum) {
+  window.ethereum.on('accountsChanged', () => {
+    signer = null;
+    currentAccount = null;
+    balanceEl.textContent = '--';
+    enableButtons(false);
+    setStatus('Conta alterada. Conecte novamente.');
+  });
+}

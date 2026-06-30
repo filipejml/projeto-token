@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CampusCoin Wallet Test</title>
+    <title>CampusCoin Wallet</title>
     <style>
       body {
         font-family: Arial, sans-serif;
@@ -45,6 +45,14 @@
         gap: 8px;
         margin-top: 12px;
       }
+      .balance {
+        margin: 16px 0;
+        padding: 16px;
+        background: #1e293b;
+        border-radius: 10px;
+        font-size: 20px;
+        font-weight: bold;
+      }
       .status {
         margin-top: 16px;
         padding: 12px;
@@ -62,17 +70,27 @@
   </head>
   <body>
     <main>
-      <h1>CampusCoin Wallet Test</h1>
-      <p>Conecte sua carteira e execute um teste simples para validar a integração com o MetaMask.</p>
+      <h1>CampusCoin Wallet</h1>
+      <p>Conecte sua carteira para consultar o saldo e transferir tokens CAMP.</p>
 
       <div class="actions">
         <button id="connectBtn">Conectar MetaMask</button>
-        <button id="testBtn" disabled>Executar teste de transação</button>
-        <button id="contractBtn" disabled>Chamar contrato</button>
       </div>
 
-      <label for="contractAddress">Endereço do contrato (opcional)</label>
+      <label for="contractAddress">Endereço do contrato</label>
       <input id="contractAddress" placeholder="0x1234..." />
+
+      <div class="balance">Saldo: <span id="balance">--</span> CAMP</div>
+      <button id="balanceBtn" disabled>Atualizar saldo</button>
+
+      <h2>Transferir tokens</h2>
+      <label for="recipient">Carteira de destino</label>
+      <input id="recipient" placeholder="0x..." />
+
+      <label for="amount">Quantidade de CAMP</label>
+      <input id="amount" type="number" min="0" step="any" placeholder="0,00" />
+
+      <button id="transferBtn" disabled>Transferir CAMP</button>
 
       <div id="status" class="status">Aguardando conexão...</div>
     </main>
