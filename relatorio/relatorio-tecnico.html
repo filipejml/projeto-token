@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Relatório Técnico — CampusCoin</title>
+  <style>
+    @page { size: A4; margin: 16mm 17mm 15mm; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: #172033;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 10.5pt;
+      line-height: 1.48;
+      background: white;
+    }
+    .page {
+      min-height: 255mm;
+      position: relative;
+      page-break-after: always;
+    }
+    .page:last-child { page-break-after: auto; }
+    .cover {
+      height: 255mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      text-align: center;
+      padding: 13mm 8mm 8mm;
+    }
+    .university {
+      color: #334155;
+      font-size: 12pt;
+      font-weight: 700;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+    }
+    .cover-mark {
+      width: 28mm;
+      height: 28mm;
+      margin: 20mm auto 9mm;
+      display: grid;
+      place-items: center;
+      border-radius: 8mm;
+      color: white;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      font-size: 25pt;
+      font-weight: 800;
+    }
+    .cover h1 {
+      margin: 0;
+      color: #111827;
+      font-size: 30pt;
+      letter-spacing: -.04em;
+    }
+    .cover h2 {
+      margin: 4mm 0 0;
+      color: #475569;
+      font-size: 16pt;
+      font-weight: 400;
+    }
+    .cover-info {
+      width: 128mm;
+      margin: 0 auto;
+      padding: 7mm;
+      text-align: left;
+      border: 1px solid #dbe3ef;
+      border-radius: 4mm;
+      background: #f8fafc;
+    }
+    .cover-info p { margin: 1.5mm 0; }
+    .cover-footer { color: #64748b; }
+    .section-label {
+      margin-bottom: 2mm;
+      color: #4f46e5;
+      font-size: 8.5pt;
+      font-weight: 800;
+      letter-spacing: .13em;
+      text-transform: uppercase;
+    }
+    h1.section-title {
+      margin: 0 0 8mm;
+      padding-bottom: 4mm;
+      border-bottom: 2px solid #4f46e5;
+      color: #111827;
+      font-size: 23pt;
+      letter-spacing: -.03em;
+    }
+    h2 {
+      margin: 6mm 0 2mm;
+      color: #1e293b;
+      font-size: 14pt;
+    }
+    h3 {
+      margin: 4mm 0 1.5mm;
+      color: #334155;
+      font-size: 11.5pt;
+    }
+    p { margin: 0 0 3mm; text-align: justify; }
+    ul { margin: 2mm 0 4mm; padding-left: 6mm; }
+    li { margin-bottom: 1.4mm; }
+    .lead {
+      color: #334155;
+      font-size: 12pt;
+      line-height: 1.6;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5mm;
+    }
+    .card {
+      padding: 5mm;
+      border: 1px solid #dbe3ef;
+      border-radius: 3mm;
+      background: #f8fafc;
+    }
+    .card h3 { margin-top: 0; color: #4f46e5; }
+    .metric {
+      margin-bottom: 1mm;
+      color: #111827;
+      font-size: 20pt;
+      font-weight: 800;
+    }
+    .muted { color: #64748b; }
+    .callout {
+      margin: 5mm 0;
+      padding: 4mm 5mm;
+      border-left: 4px solid #06b6d4;
+      background: #ecfeff;
+    }
+    .warning {
+      border-left-color: #f59e0b;
+      background: #fffbeb;
+    }
+    table {
+      width: 100%;
+      margin: 3mm 0 5mm;
+      border-collapse: collapse;
+      font-size: 9.5pt;
+    }
+    th, td {
+      padding: 2.7mm;
+      border: 1px solid #dbe3ef;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { color: #334155; background: #eef2ff; }
+    code {
+      padding: .4mm 1mm;
+      border-radius: 1mm;
+      color: #4338ca;
+      background: #eef2ff;
+      font-family: Consolas, monospace;
+      font-size: 9pt;
+    }
+    pre {
+      margin: 3mm 0 5mm;
+      padding: 4mm;
+      border-radius: 3mm;
+      overflow: hidden;
+      color: #dbeafe;
+      background: #0f172a;
+      font-family: Consolas, monospace;
+      font-size: 8.4pt;
+      line-height: 1.45;
+      white-space: pre-wrap;
+    }
+    .architecture {
+      margin: 8mm 0;
+      display: grid;
+      grid-template-columns: 1fr 14mm 1fr 14mm 1fr;
+      align-items: center;
+      text-align: center;
+    }
+    .arch-box {
+      min-height: 35mm;
+      padding: 5mm 3mm;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      border: 1px solid #c7d2fe;
+      border-radius: 4mm;
+      background: #eef2ff;
+    }
+    .arrow { color: #4f46e5; font-size: 22pt; font-weight: 700; }
+    figure { margin: 4mm 0; }
+    figure img {
+      width: 100%;
+      max-height: 145mm;
+      object-fit: contain;
+      object-position: top;
+      border: 1px solid #cbd5e1;
+      border-radius: 3mm;
+      background: #07111f;
+    }
+    figcaption {
+      margin-top: 2mm;
+      color: #64748b;
+      font-size: 8.5pt;
+      text-align: center;
+    }
+    .check {
+      color: #15803d;
+      font-weight: 700;
+    }
+    .pending {
+      color: #b45309;
+      font-weight: 700;
+    }
+    .footer {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding-top: 2mm;
+      border-top: 1px solid #e2e8f0;
+      color: #94a3b8;
+      font-size: 8pt;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <section class="page cover">
+    <div>
+      <div class="university">Universidade Estadual do Piauí</div>
+      <div class="cover-mark">CC</div>
+      <h1>CampusCoin</h1>
+      <h2>Relatório Técnico da Aplicação Web3</h2>
+    </div>
+    <div class="cover-info">
+      <p><strong>Disciplina:</strong> Blockchain, Smart Contracts e Web3</p>
+      <p><strong>Professor:</strong> Bringel Filho</p>
+      <p><strong>Integrantes:</strong> Filipe Lopes e Thiago Costa</p>
+      <p><strong>Rede-alvo:</strong> Ethereum Sepolia</p>
+    </div>
+    <div class="cover-footer">Teresina — PI · 2026</div>
+  </section>
+
+  <section class="page">
+    <div class="section-label">1 · Visão geral</div>
+    <h1 class="section-title">Introdução e objetivo</h1>
+    <p class="lead">O CampusCoin é um token fungível desenvolvido em Solidity para demonstrar, em contexto acadêmico, os principais componentes de uma aplicação descentralizada: contrato inteligente, carteira digital, rede blockchain e interface Web3.</p>
+
+    <h2>Objetivo do token</h2>
+    <p>O projeto propõe uma moeda digital experimental para um ecossistema universitário. O token CAMP pode representar créditos acadêmicos ou pontos de participação, permitindo que estudantes e demais participantes recebam e transfiram unidades por meio de endereços Ethereum.</p>
+    <p>Além das operações fundamentais de um token fungível, a implementação inclui criação controlada de novas unidades (<em>mint</em>) e destruição voluntária de saldo (<em>burn</em>). O sistema foi preparado para execução na testnet Ethereum Sepolia, que permite testes sem utilizar ativos com valor financeiro real.</p>
+
+    <h2>Escopo funcional</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Smart contract</h3>
+        <ul>
+          <li>Nome, símbolo, decimais e supply total;</li>
+          <li>Consulta e controle de saldos;</li>
+          <li>Transferências diretas e delegadas;</li>
+          <li>Mint exclusivo do proprietário;</li>
+          <li>Burn do saldo do próprio usuário.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Interface Web3</h3>
+        <ul>
+          <li>Conexão com MetaMask;</li>
+          <li>Informação do endereço do contrato;</li>
+          <li>Consulta do saldo em CAMP;</li>
+          <li>Transferência para outra carteira;</li>
+          <li>Mensagens de confirmação e erro.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout">A aplicação é educacional. A Sepolia utiliza ETH de teste, sem valor monetário real, para pagamento de gas.</div>
+    <div class="footer">CampusCoin · Relatório Técnico · 2</div>
+  </section>
+
+  <section class="page">
+    <div class="section-label">2 · Modelo econômico</div>
+    <h1 class="section-title">Tokenomics</h1>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="metric">1.000.000</div>
+        <div class="muted">CAMP criados no deploy</div>
+      </div>
+      <div class="card">
+        <div class="metric">18</div>
+        <div class="muted">casas decimais</div>
+      </div>
+    </div>
+
+    <h2>Supply</h2>
+    <p>O supply inicial é de 1.000.000 CAMP, considerando 18 casas decimais. No construtor, o contrato registra o endereço que realizou o deploy como <code>owner</code> e executa <code>_mint</code>, atribuindo a totalidade do supply inicial a esse endereço.</p>
+    <p>O valor de <code>totalSupply</code> é dinâmico: aumenta quando o proprietário executa <code>mint</code> e diminui quando um detentor executa <code>burn</code>.</p>
+
+    <h2>Utilidade</h2>
+    <ul>
+      <li>Representar pontos por participação em atividades acadêmicas;</li>
+      <li>Permitir recompensas em projetos, eventos e iniciativas estudantis;</li>
+      <li>Realizar transferências entre carteiras na testnet;</li>
+      <li>Servir como laboratório para integração entre Solidity, MetaMask e ethers.js.</li>
+    </ul>
+
+    <h2>Distribuição</h2>
+    <table>
+      <thead><tr><th>Etapa</th><th>Destinatário</th><th>Quantidade</th><th>Regra</th></tr></thead>
+      <tbody>
+        <tr><td>Deploy</td><td>Carteira do deployer/owner</td><td>1.000.000 CAMP</td><td>Distribuição inicial automática</td></tr>
+        <tr><td>Mint posterior</td><td>Endereço informado</td><td>Definida pelo owner</td><td>Apenas o proprietário pode criar</td></tr>
+        <tr><td>Transferência</td><td>Qualquer endereço válido</td><td>Limitada pelo saldo</td><td>Iniciada pelo detentor</td></tr>
+        <tr><td>Burn</td><td>Endereço zero</td><td>Limitada pelo saldo</td><td>Reduz o supply total</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warning"><strong>Observação:</strong> não existe limite máximo de mint no código atual. Em um cenário de produção, recomenda-se definir uma política de emissão ou um teto de supply.</div>
+    <div class="footer">CampusCoin · Relatório Técnico · 3</div>
+  </section>
+
+  <section class="page">
+    <div class="section-label">3 · Componentes</div>
+    <h1 class="section-title">Arquitetura</h1>
+    <p>A arquitetura segue um modelo cliente–blockchain. Não há backend centralizado: o navegador acessa o contrato por meio do provedor injetado pela carteira MetaMask.</p>
+
+    <div class="architecture">
+      <div class="arch-box"><strong>Frontend</strong><span class="muted">HTML, CSS e JavaScript</span></div>
+      <div class="arrow">→</div>
+      <div class="arch-box"><strong>MetaMask</strong><span class="muted">Conta, assinatura e RPC</span></div>
+      <div class="arrow">→</div>
+      <div class="arch-box"><strong>Sepolia</strong><span class="muted">Contrato CampusCoin</span></div>
+    </div>
+
+    <h2>Frontend</h2>
+    <p>O arquivo <code>frontend/index.html</code> define a apresentação, enquanto <code>frontend/app.js</code> contém a integração Web3. A biblioteca ethers.js cria um <code>BrowserProvider</code> a partir de <code>window.ethereum</code>, obtém o assinante e instancia o contrato usando endereço e ABI.</p>
+
+    <h2>MetaMask</h2>
+    <p>A carteira controla a chave do usuário e solicita autorização para conectar a conta. Consultas de saldo são chamadas de leitura e não consomem gas. Transferências alteram o estado da blockchain, portanto exigem assinatura e ETH Sepolia para pagar gas.</p>
+
+    <h2>Smart contract e blockchain</h2>
+    <p>O arquivo <code>contracts/CampusCoin.sol</code> concentra as regras do token. A blockchain mantém os saldos e eventos de forma replicada e verificável. O contrato usa Solidity <code>^0.8.20</code> e não depende de bibliotecas externas.</p>
+
+    <table>
+      <thead><tr><th>Camada</th><th>Responsabilidade</th><th>Tecnologia</th></tr></thead>
+      <tbody>
+        <tr><td>Apresentação</td><td>Entrada de dados, saldo e feedback ao usuário</td><td>HTML/CSS</td></tr>
+        <tr><td>Integração</td><td>ABI, conversão de unidades e envio de chamadas</td><td>JavaScript + ethers.js 6.13.2</td></tr>
+        <tr><td>Carteira</td><td>Conta, rede, assinatura e confirmação</td><td>MetaMask</td></tr>
+        <tr><td>Negócio</td><td>Supply, saldos, transferências, mint e burn</td><td>Solidity</td></tr>
+        <tr><td>Persistência</td><td>Estado e histórico imutável das transações</td><td>Ethereum Sepolia</td></tr>
+      </tbody>
+    </table>
+    <div class="footer">CampusCoin · Relatório Técnico · 4</div>
+  </section>
+
+  <section class="page">
+    <div class="section-label">4 · Contrato inteligente</div>
+    <h1 class="section-title">Implementação técnica</h1>
+    <p>O contrato implementa as operações essenciais esperadas de um token fungível: metadados, supply, controle de saldo, transferência, aprovação e transferência delegada.</p>
+
+    <pre>constructor() {
+    owner = msg.sender;
+    _mint(msg.sender, 1_000_000 * 10 ** uint256(decimals));
+}
+
+function transfer(address to, uint256 amount) external returns (bool) {
+    _transfer(msg.sender, to, amount);
+    return true;
+}</pre>
+
+    <h2>Estruturas e validações</h2>
+    <table>
+      <thead><tr><th>Requisito</th><th>Aplicação no contrato</th></tr></thead>
+      <tbody>
+        <tr><td><code>constructor</code></td><td>Define o owner e gera o supply inicial.</td></tr>
+        <tr><td><code>mapping</code></td><td>Armazena saldos e allowances por endereço.</td></tr>
+        <tr><td><code>require</code></td><td>Verifica proprietário, saldo, allowance e endereços.</td></tr>
+        <tr><td>Funções públicas/externas</td><td>Expõem consultas e transações do token.</td></tr>
+        <tr><td>Eventos</td><td><code>Transfer</code> e <code>Approval</code> registram operações.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Funcionalidades extras</h2>
+    <div class="grid-2">
+      <div class="card">
+        <h3>Mint</h3>
+        <p>Cria novas unidades, aumenta o supply e credita o destinatário. O modificador <code>onlyOwner</code> restringe a operação ao deployer.</p>
+      </div>
+      <div class="card">
+        <h3>Burn</h3>
+        <p>Remove unidades do saldo de quem chama a função e reduz o supply total. A validação impede queima superior ao saldo.</p>
+      </div>
+    </div>
+
+    <h2>Considerações de segurança</h2>
+    <p>O compilador Solidity 0.8 possui verificação nativa de overflow e underflow. As transferências rejeitam o endereço zero e saldo insuficiente. Para uso em produção, seria recomendável adotar uma implementação ERC-20 amplamente auditada, testes automatizados e mecanismos de transferência ou renúncia de propriedade.</p>
+    <div class="footer">CampusCoin · Relatório Técnico · 5</div>
+  </section>
+
+  <section class="page">
+    <div class="section-label">5 · Aplicação cliente</div>
+    <h1 class="section-title">Interface Web3</h1>
+    <figure>
+      <img src="../frontend/interface.png" alt="Interface web da CampusCoin">
+      <figcaption>Figura 1 — Interface local da CampusCoin com conexão MetaMask, consulta de saldo e transferência.</figcaption>
+    </figure>
+    <p>A tela organiza a interação em três áreas: configuração da carteira e contrato, saldo disponível e formulário de transferência. Os botões transacionais permanecem desabilitados até que a carteira seja conectada.</p>
+    <p>O frontend valida os endereços com <code>ethers.isAddress</code>, converte CAMP para a menor unidade com <code>ethers.parseUnits</code> e aguarda a confirmação por meio de <code>tx.wait()</code>. Após uma transferência confirmada, o saldo é atualizado.</p>
+    <div class="footer">CampusCoin · Relatório Técnico · 6</div>
+  </section>
+
+  <section class="page">
+    <div class="section-label">6 · Viabilidade</div>
+    <h1 class="section-title">Deploy e custos de gas</h1>
+    <p>O deploy está planejado para a Ethereum Sepolia por meio do Remix IDE e MetaMask. A carteira do deployer deve possuir ETH Sepolia para custear a publicação do bytecode.</p>
+
+    <h2>Modelo de custo</h2>
+    <p>O custo de qualquer transação é calculado por <strong>gas utilizado × preço do gas</strong>. Como o preço varia conforme a rede, os valores abaixo são referências técnicas, não comprovantes de execução.</p>
+    <table>
+      <thead><tr><th>Operação</th><th>Faixa indicativa</th><th>Exemplo a 2 gwei</th></tr></thead>
+      <tbody>
+        <tr><td>Deploy do contrato</td><td>≈ 900.000–1.300.000 gas</td><td>≈ 0,0018–0,0026 ETH Sepolia</td></tr>
+        <tr><td>Transfer para saldo novo</td><td>≈ 45.000–55.000 gas</td><td>≈ 0,00009–0,00011 ETH Sepolia</td></tr>
+        <tr><td>Consulta de saldo</td><td>Sem gas pago pelo usuário</td><td>Chamada local <code>eth_call</code></td></tr>
+      </tbody>
+    </table>
+    <p class="muted">A medição definitiva deve ser extraída do recibo da transação no Etherscan após o deploy e os testes reais.</p>
+
+    <h2>Evidências do deploy</h2>
+    <table>
+      <tbody>
+        <tr><th>Rede</th><td>Ethereum Sepolia</td></tr>
+        <tr><th>Endereço do contrato</th><td class="pending">Pendente de deploy real</td></tr>
+        <tr><th>Hash da transação</th><td class="pending">Pendente de deploy real</td></tr>
+        <tr><th>Link Etherscan</th><td class="pending">Pendente de deploy real</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout warning">Este relatório não declara um deploy que ainda não ocorreu. Após a publicação, os três campos acima devem ser substituídos pelos dados verificáveis da Sepolia.</div>
+    <div class="footer">CampusCoin · Relatório Técnico · 7</div>
+  </section>
+
+  <section class="page">
+    <div class="section-label">7 · Verificação</div>
+    <h1 class="section-title">Testes e evidências</h1>
+    <h2>Verificações realizadas</h2>
+    <table>
+      <thead><tr><th>Teste</th><th>Resultado</th><th>Evidência</th></tr></thead>
+      <tbody>
+        <tr><td>Sintaxe do frontend</td><td class="check">Aprovado</td><td><code>node --check frontend/app.js</code> sem erros.</td></tr>
+        <tr><td>Elementos obrigatórios</td><td class="check">Aprovado</td><td>Botões de conexão, saldo e transferência presentes.</td></tr>
+        <tr><td>ABI da interface</td><td class="check">Aprovado</td><td><code>balanceOf</code>, <code>transfer</code> e <code>decimals</code> definidos.</td></tr>
+        <tr><td>Regras do contrato</td><td class="check">Inspeção concluída</td><td>Mappings, requires, constructor, mint e burn presentes.</td></tr>
+        <tr><td>Compilação Solidity</td><td class="pending">Pendente</td><td>Compilar no Remix com Solidity 0.8.20 ou superior.</td></tr>
+        <tr><td>Deploy e transações Sepolia</td><td class="pending">Pendente</td><td>Exige MetaMask, ETH Sepolia e confirmação do usuário.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Roteiro para evidências finais</h2>
+    <ol>
+      <li>Compilar <code>CampusCoin.sol</code> no Remix;</li>
+      <li>Selecionar <em>Injected Provider — MetaMask</em> na Sepolia;</li>
+      <li>Realizar o deploy e registrar endereço e hash;</li>
+      <li>Abrir o contrato no Sepolia Etherscan;</li>
+      <li>Inserir o endereço na interface e conectar a carteira;</li>
+      <li>Capturar o saldo inicial de 1.000.000 CAMP;</li>
+      <li>Transferir uma quantidade para uma segunda carteira;</li>
+      <li>Capturar o recibo e os saldos após confirmação.</li>
+    </ol>
+
+    <h2>Conclusão</h2>
+    <p>O CampusCoin demonstra os fundamentos de um token fungível e sua integração com uma interface Web3. A solução cobre metadados, supply, saldo, transferências, permissões, mint e burn, além de conexão MetaMask, consulta de saldo e envio de tokens. A etapa restante para concluir a validação de ponta a ponta é o deploy real na Sepolia e o registro das evidências on-chain.</p>
+    <div class="callout"><strong>Resultado:</strong> aplicação tecnicamente preparada para testes em Sepolia, mantendo transparência sobre as etapas ainda pendentes.</div>
+    <div class="footer">CampusCoin · Relatório Técnico · 8</div>
+  </section>
+</body>
+</html>
